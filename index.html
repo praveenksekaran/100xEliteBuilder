@@ -1,0 +1,54 @@
+<!-- index.html - LOGIN PAGE -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100xEliteBuilders - Login</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo-large">
+                    <div class="logo-icon-large">🦅</div>
+                    <h1>100xEliteBuilders</h1>
+                    <p>Where Elite Developers Shine</p>
+                </div>
+            </div>
+            
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label class="form-label" for="username">Username</label>
+                    <input type="text" id="username" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="role">Role</label>
+                    <select id="role" class="form-input" required>
+                        <option value="">Select your role</option>
+                        <option value="developer">Developer</option>
+                        <option value="sponsor">Sponsor</option>
+                        <option value="moderator">Moderator</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+            
+            <div class="login-footer">
+                <p>New to 100xEliteBuilders? <a href="#" class="link">Create Account</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/data.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challenge Details - 100xEliteBuilders</title>
+    <link rel="stylesheet" href="../../css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="dashboard.html" class="logo">
+                <div class="logo-icon">🦅</div>
+                <h1>100xEliteBuilders</h1>
+            </a>
+            <div class="user-info"></div>
+        </div>
+    </header>
+    
+    <nav class="nav-tabs">
+        <div class="nav-tabs-list"></div>
+    </nav>
+    
+    <main class="container">
+        <div id="main-content">
+            <div class="loading">
+                <div class="spinner"></div>
+                Loading challenge details...
+            </div>
+        </div>
+    </main>
+    
+    <script src="../../js/data.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/common.js"></script>
+    <script>
+        function loadChallengeDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const challengeId = parseInt(urlParams.get('id'));
+            const challenge = appData.challenges.find(c => c.id === challengeId);
+            
+            if (!challenge) {
+                document.getElementById('main-content').innerHTML = `
+                    <div class="alert alert-error">Challenge not found!</div>
+                `;
+                return;
+            }
+            
+            document.getElementById('main-content').innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h1>${challenge.title}</h1>
+                            <div class="challenge-meta">
+                                <span class="challenge-sponsor">by ${challenge.sponsor}</span>
+                                <span class="challenge-status status-${challenge.status}">${challenge.status}</span>
+                            </div>
+                        </div>
+                        <div class="challenge-reward">${challenge.reward}</div>
+                    </div>
+                    
+                    <div class="challenge-details">
+                        <section class="mb-4">
+                            <h3>Overview</h3>
+                            <p>${challenge.overview}</p>
+                        </section>
+                        
+                        <section class="mb-4">
+                            <h3>Problem Statement</h3>
+                            <p>${challenge.problemStatement}</p>
+                        </section>
+                        
+                        <section class="mb-4">
+                            <h3>Guidelines</h3>
+                            <p>${challenge.guidelines}</p>
+                        </section>
+                        
+                        <section class="mb-4">
+                            <h3>Scope Exclusions</h3>
+                            <p>${challenge.scopeExclusion}</p>
+                        </section>
+                        
+                        <section class="mb-4">
+                            <h3>Timeline</h3>
+                            <p><strong>Start Date:</strong> ${formatDate(challenge.startDate)}</p>
+                            <p><strong>Close Date:</strong> ${formatDate(challenge.closeDate)}</p>
+                        </section>
+                        
+                        <section class="mb-4">
+                            <h3>Participation</h3>
+                            <p><strong>Current Submissions:</strong> ${challenge.submissions}</p>
+                            <p><strong>Category:</strong> ${challenge.category}</p>
+                        </section>
+                    </div>
+                    
+                    ${challenge.status === 'open' ? `
+                        <div class="challenge-actions">
+                            <button class="btn btn-success" onclick="showSubmissionForm()">Submit Solution</button>
+                            <a href="challenges.html" class="btn btn-secondary">Back to Challenges</a>
+                        </div>
+                    ` : `
+                        <div class="challenge-actions">
+                            <a href="challenges.html" class="btn btn-secondary">Back to Challenges</a>
+                        </div>
+                    `}
+                </div>
+                
+                <div id="submission-form" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Submit Your Solution</h2>
+                        </div>
+                        <form onsubmit="submitSolution(event)">
+                            <div class="form-group">
+                                <label class="form-label">GitHub Repository Link *</label>
+                                <input type="url" class="form-input" id="githubLink" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Live Demo URL *</label>
+                                <input type="url" class="form-input" id="demoLink" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Video Walkthrough URL</label>
+                                <input type="url" class="form-input" id="videoLink">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Pitch Deck URL</label>
+                                <input type="url" class="form-input" id="pitchDeck">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Additional Notes</label>
+                                <textarea class="form-input" id="notes" rows="4" placeholder="Describe your approach, technologies used, challenges faced, etc."></textarea>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-success">Submit Solution</button>
+                                <button type="button" class="btn btn-secondary" onclick="hideSubmissionForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function showSubmissionForm() {
+            document.getElementById('submission-form').style.display = 'block';
+            document.getElementById('submission-form').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function hideSubmissionForm() {
+            document.getElementById('submission-form').style.display = 'none';
+        }
+        
+        function submitSolution(e) {
+            e.preventDefault();
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const challengeId = parseInt(urlParams.get('id'));
+            const user = getCurrentUser();
+            
+            const submission = {
+                challengeId: challengeId,
+                developerId: user.id,
+                developerName: user.name,
+                githubLink: document.getElementById('githubLink').value,
+                demoLink: document.getElementById('demoLink').value,
+                videoLink: document.getElementById('videoLink').value,
+                pitchDeck: document.getElementById('pitchDeck').value,
+                notes: document.getElementById('notes').value,
+                aiScore: Math.floor(Math.random() * 40) + 60, // Random score 60-100
+                moderatorScore: 0,
+                badges: [],
+                submittedAt: new Date().toISOString().split('T')[0]
+            };
+            
+            addSubmission(submission);
+            showAlert('Solution submitted successfully! You will receive AI feedback within 24 hours.', 'success');
+            hideSubmissionForm();
+        }
+    </script>
+</body>
+</html>

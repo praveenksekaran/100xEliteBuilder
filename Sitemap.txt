@@ -1,0 +1,32 @@
+
+
+
+<!-- PROJECT STRUCTURE -->
+<!--
+100xEliteBuilders/
+├── index.html (Login Page)
+├── css/
+│   └── styles.css
+├── js/
+│   ├── auth.js
+│   ├── common.js
+│   └── data.js
+├── pages/
+│   ├── developer/
+│   │   ├── dashboard.html
+│   │   ├── challenges.html
+│   │   ├── challenge-details.html
+│   │   ├── leaderboard.html
+│   │   └── profile.html
+│   ├── sponsor/
+│   │   ├── dashboard.html
+│   │   ├── challenges.html
+│   │   ├── create-challenge.html
+│   │   ├── leaderboard.html
+│   │   └── my-actions.html
+│   └── moderator/
+│       ├── dashboard.html
+│       ├── submissions.html
+│       └── leaderboard.html
+└── assets/
+    └── logo.svg
