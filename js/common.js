@@ -275,12 +275,12 @@ function generateModeratorDashboard() {
     `;
 }
 
-function loadChallenges(role) {
+async function loadChallenges(role) {
     const mainContent = document.getElementById('main-content');
     if (!mainContent) return;
     
     //const challenges = getChallenges();
-    const challenges = getChallengesfromDB();
+    const challenges = await getChallengesfromDB();
     
     mainContent.innerHTML = `
         <div class="filters">
@@ -295,16 +295,21 @@ function loadChallenges(role) {
         
         ${role === 'sponsor' ? '<div class="text-right mb-4"><a href="create-challenge.html" class="btn btn-success">Create New Challenge</a></div>' : ''}
         
-        <div class="challenge-grid" id="challenge-grid">
-            ${challenges.map(challenge => generateChallengeCard(challenge, role === 'sponsor')).join('')}
+        <div class="challenge-grid" id="challenge-grid">           
+                ${challenges.map(challenge => generateChallengeCard(challenge, true)).join('')}             
         </div>
     `;
     
-    // Setup filter functionality
-    setupChallengeFilters();
+    // Setup filter functionality 
+    //${console.log('challenges type:', typeof challenges, challenges)}
+    // ${challenges.map(challenge => generateChallengeCard(challenge, role === 'sponsor')).join('')} 
+     //${Array.isArray(challenges) ? challenges.map(challenge => generateChallengeCard(challenge)).join('') : ''}  
+   
+    //setupChallengeFilters();
 }
 
-function generateChallengeCard(challenge, isOwner = false) {
+//function generateChallengeCard(challenge, isOwner = false) {
+function generateChallengeCard(challenge, isOwner ) {   
     return `
         <div class="card challenge-card" onclick="viewChallengeDetails(${challenge.id})">
             <div class="challenge-status status-${challenge.status}">${challenge.status}</div>
@@ -312,10 +317,10 @@ function generateChallengeCard(challenge, isOwner = false) {
             <p>${challenge.overview}</p>
             <div class="challenge-meta">
                 <span class="challenge-sponsor">by ${challenge.sponsor}</span>
-                <span class="challenge-reward">${challenge.reward}</span>
+                <span class="challenge-reward">${challenge.reward}$</span>
             </div>
             <div class="challenge-stats">
-                <small>${challenge.submissions} submissions • Closes: ${challenge.closeDate}</small>
+                <small>${challenge.submissions} submissions • Closes: ${challenge.closedate}</small>
             </div>
             ${isOwner ? `<div class="challenge-actions mt-3">
                 <button class="btn btn-info" onclick="event.stopPropagation(); viewSubmissions(${challenge.id})">View Submissions</button>
@@ -447,7 +452,7 @@ function showAlert(message, type = 'info') {
     }, 5000);
 }
 
-async function sendtoSupabase(action, sendData) {
+async function sendDatatoAPI(action, sendData) {
     const apiPath = sampleData.urls.find(url => url.name === 'fastAPI').url.concat(action);
     const stringifiedJSON = JSON.stringify(sendData);
     
@@ -455,62 +460,112 @@ async function sendtoSupabase(action, sendData) {
         const response = await fetch(`${apiPath}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
-            },        
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            mode: 'cors',
             body: stringifiedJSON
         });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
         console.log('Success:', data);
         return data;
     } catch (error) {
         console.error('Error:', error);
-        showAlert('Error creating challenge', 'error');
+        showAlert('Error: ' + error.message, 'error');
         throw error;
     }
 }
 
-function submitChallenge(){       
-    const challengeData = {
-        sponsor_id: 1,
-        status_id: 1,
-        title: document.getElementById('title').value,
-        overview: document.getElementById('overview').value,
-        problem_statement: document.getElementById('problemStatement').value,
-        start_date: document.getElementById('startDate').value,
-        close_date: document.getElementById('closeDate').value,
-        scope_exclusions: document.getElementById('scopeExclusions').value,
-        guidlines: "",
-        //uploads: document.getElementById('files').files,
-        uploads: "FILE PATH",
-        appType_id: 5,
-        win_declare_date: document.getElementById('closeDate').value,
-        reward_type_id: document.getElementById('rewardType').value,
-        sponsor_id:1,
-        description:document.getElementById('rewardDescription').value,
-        value:document.getElementById('rewardValue').value
-    };      
-    
-    responseData = sendtoSupabase('/create_challengeAll',challengeData);
-   
-    //console.log('responseData',responseData);
-    
-    const alertDiv = document.createElement('div');
-    alertDiv.className = 'alert alert-success';
-    alertDiv.textContent = 'Reward created successfully!';
-    alertDiv.style.position = 'fixed';
-    alertDiv.style.top = '50%';
-    alertDiv.style.left = '50%';
-    alertDiv.style.transform = 'translate(-50%, -50%)';
-    alertDiv.style.zIndex = '1000';
-    alertDiv.style.padding = '20px';
-    alertDiv.style.borderRadius = '5px';
-    alertDiv.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
-    document.body.appendChild(alertDiv);
-    setTimeout(() => alertDiv.remove(), 5000);
-    //document.getElementById('challengeForm').reset();   
-   
+async function submitChallenge() {       
+    try {
+        const challengeData = {
+            sponsor_id: 1,
+            status_id: 1,
+            title: document.getElementById('title').value,
+            overview: document.getElementById('overview').value,
+            problem_statement: document.getElementById('problemStatement').value,
+            start_date: document.getElementById('startDate').value,
+            close_date: document.getElementById('closeDate').value,
+            scope_exclusions: document.getElementById('scopeExclusions').value,
+            guidlines: "",
+            uploads: "FILE PATH",
+            appType_id: 5,
+            win_declare_date: document.getElementById('closeDate').value,
+            reward_type_id: document.getElementById('rewardType').value,
+            sponsor_id: 1,
+            description: document.getElementById('rewardDescription').value,
+            value: document.getElementById('rewardValue').value
+        };      
+        
+        const responseData = await sendDatatoAPI('/create_challengeAll', challengeData);
+        
+        if (responseData && responseData.status === 'success') {
+            showAlert('Challenge created successfully!', 'success');
+            // Optionally reset the form
+            // document.getElementById('challengeForm').reset();
+        } else {
+            showAlert('Failed to create challenge', 'error');
+        }
+    } catch (error) {
+        console.error('Error in submitChallenge:', error);
+        showAlert('Error creating challenge: ' + error.message, 'error');
+    }
 }
 
-function getChallengesfromDB(){
-    alert('this works');
+async function getDatafromAPI(action, params) {
+    const apiPath = sampleData.urls.find(url => url.name === 'fastAPI').url.concat(action);
+    const stringifiedJSON = JSON.stringify(params);
+    
+    try {
+        const response = await fetch(`${apiPath}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            mode: 'cors',
+            //body: stringifiedJSON
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const responseData = await response.json();
+        console.log('Success:', responseData.data);
+        return responseData.data;
+    } catch (error) {
+        console.error('Error:', error);
+        showAlert('Error: ' + error.message, 'error');
+        throw error;
+    }
+}
+
+async function getChallengesfromDB(filter = 'all'){
+    const challenges = Array.from(await getDatafromAPI('/get_challenges',''));      
+    if (filter !== 'all') {
+        challenges = challenges.filter(challenge => {
+            switch(filter) {
+                case 'new':
+                    return new Date(challenge.startDate) > new Date(Date.now() - 7*24*60*60*1000);
+                case 'open':
+                    return challenge.status === 'open';
+                case 'closed':
+                    return challenge.status === 'closed';
+                default:
+                    return challenge.category === filter;
+            }
+        });
+    }
+    
+    return challenges;
+}
+
+function SubmitChallenge(){
+    //Save the values in DB 
 }

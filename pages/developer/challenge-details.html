@@ -23,9 +23,123 @@
     
     <main class="container">
         <div id="main-content">
-            <div class="loading">
-                <div class="spinner"></div>
-                Loading challenge details...
+            <div class="card challenge-details-card">
+                <div class="card-header">
+                    <h1 class="challenge-title">Enterprise AI Cost Optimizer</h1>
+                    <div class="challenge-meta">
+                        <span class="challenge-sponsor">by 100xEngineers</span>
+                        <span class="challenge-status status-New">New</span>
+                        <span class="challenge-category">Category: All</span>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="tabs" style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid #e0e0e0; padding-bottom: 1rem;">
+                        <button class="tab-btn active" data-tab="overview" onclick="switchTab('overview')" style="padding: 0.75rem 1.5rem; border: none; background: none; cursor: pointer; font-weight: 500; color: #666; border-bottom: 2px solid transparent; transition: all 0.3s ease;">Overview</button>
+                        <button class="tab-btn" data-tab="details" onclick="switchTab('details')" style="padding: 0.75rem 1.5rem; border: none; background: none; cursor: pointer; font-weight: 500; color: #666; border-bottom: 2px solid transparent; transition: all 0.3s ease;">Details</button>
+                        <button class="tab-btn" data-tab="timeline" onclick="switchTab('timeline')" style="padding: 0.75rem 1.5rem; border: none; background: none; cursor: pointer; font-weight: 500; color: #666; border-bottom: 2px solid transparent; transition: all 0.3s ease;">Timeline</button>
+                        <button class="tab-btn" data-tab="submissions" onclick="switchTab('submissions')" style="padding: 0.75rem 1.5rem; border: none; background: none; cursor: pointer; font-weight: 500; color: #666; border-bottom: 2px solid transparent; transition: all 0.3s ease;">Guidlines</button>
+                        <button class="tab-btn" data-tab="guidelines" onclick="switchTab('guidelines')" style="padding: 0.75rem 1.5rem; border: none; background: none; cursor: pointer; font-weight: 500; color: #666; border-bottom: 2px solid transparent; transition: all 0.3s ease;">Submission</button>
+                    </div>
+
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="overview-tab">
+                            <div class="info-section">
+                                <h3>Overview</h3>
+                                <p>As companies adopt generative AI, teams face a lot of common challenges.<br>
+                                1. Which tasks can AI automate to free up human time, resource and reduce costs<br>
+                                2. How to optimize costs of AI agents</p>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="details-tab" style="display: none;">
+                            <div class="info-section">
+                                <h3>Problem Statement</h3>
+                                <p>Build an AI Optimization Advisor Agent for Enterprise using Lyzr Studio. (Using Amazon Nova Models and AWS Bedrock if required)</p>
+                            </div>
+                            <div class="info-section">
+                                <h3>Scope Exclusions</h3>
+                                <p>- any other platform apart from Lyzr studio<br>
+                                - only Amazon Nova or AWS bedrock</p>
+                            </div>
+                            <div class="challenge-stats">
+                                <div class="stat-item">
+                                    <h4>Reward</h4>
+                                    <p class="reward-amount">$3,500</p>
+                                </div>                                
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="timeline-tab" style="display: none;">
+                            <div class="timeline-grid">
+                                <div class="date-item">
+                                    <h4>Start Date</h4>
+                                    <p>2025-05-31</p>
+                                </div>
+                                <div class="date-item">
+                                    <h4>Close Date</h4>
+                                    <p>2025-06-04</p>
+                                </div>                               
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="submissions-tab" style="display: none;">
+                            <div class="submissions-grid">
+                                <div class="stat-item">
+                                    <h4>Submissions</h4>
+                                    <p>0</p>
+                                </div>                               
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="guidelines-tab" style="display: none;">
+                            <div class="info-section">
+                                <h3>Submission Guidelines</h3>
+                                <div class="guidelines-grid">
+                                    <div class="guideline-item">
+                                        <h4>Repository</h4>
+                                        <input type="text" class="form-input" placeholder="Enter repository URL">
+                                    </div>
+                                    <div class="guideline-item">
+                                        <h4>Presentation Deck</h4>
+                                        <input type="text" class="form-input" placeholder="Enter Presentation URL">
+                                    </div>
+                                    <div class="guideline-item">
+                                        <h4>Demo Video</h4>
+                                        <input type="text" class="form-input" placeholder="Enter Demo URL">
+                                    </div>
+                                    <div class="guideline-item">
+                                        <h4>Sandbox Environment</h4>
+                                        <input type="text" class="form-input" placeholder="Enter Sandbox URL">
+                                    </div>
+                                    <div class="form-actions mt-4">
+                                        <button type="submit" class="btn btn-primary" onclick="DevSubmission()">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                       
+                    </div>                    
+                </div>
+
+                <script>
+                    function switchTab(tabName) {
+                        // Hide all tab panes
+                        document.querySelectorAll('.tab-pane').forEach(pane => {
+                            pane.style.display = 'none';
+                        });
+                        
+                        // Remove active class from all buttons
+                        document.querySelectorAll('.tab-btn').forEach(btn => {
+                            btn.classList.remove('active');
+                        });
+                        
+                        // Show selected tab pane
+                        document.getElementById(tabName + '-tab').style.display = 'block';
+                        
+                        // Add active class to clicked button
+                        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+                    }
+                </script>
             </div>
         </div>
     </main>
