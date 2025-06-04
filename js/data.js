@@ -137,7 +137,7 @@ const sampleData = {
     ],
 
     urls: [
-        { name:'fastAPI', url:'http://127.0.0.1:8000'},       
+        { name:'fastAPI', url:'https://praveen-k-s-100xbuilder-apiservice.hf.space'},       
         { name:'supabaseAPI', url:'http://127.0.0.1:8000'}
     ]
 };
